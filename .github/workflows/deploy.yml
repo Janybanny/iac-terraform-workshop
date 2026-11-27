@@ -1,4 +1,4 @@
-name: Integration
+name: Deploy
 
 on:
   workflow_dispatch
