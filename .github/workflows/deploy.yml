@@ -8,15 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+      # for the terraform aws connection
       TF_VAR_aws_access_key_id:     ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
       TF_VAR_aws_secret_access_key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
       TF_VAR_aws_session_token:     ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
+      # for the backend bucket
+      AWS_ACCESS_KEY_ID:     ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN:     ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
 
     steps:
       - uses: actions/checkout@v7
       - uses: opentofu/setup-opentofu@v2.0.2
       - name: Deploy
         run: |
-          tofu init
+          tofu init -input=false \
+            -backend-config="bucket=terraform-backend-457621484008-us-east-1-an" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="encrypt=true" \
+            -backend-config="use_lockfile=true"
           tofu plan -out=tfplan
           tofu apply -auto-approve tfplan
