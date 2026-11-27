@@ -2,13 +2,21 @@ name: Integration
 
 on:
   workflow_dispatch
-  
+
 jobs:
   Deploy:
     runs-on: ubuntu-latest
+    
+    env:
+      TF_VAR_aws_access_key_id:     ${{ secrets.TF_VAR_AWS_ACCESS_KEY_ID }}
+      TF_VAR_aws_secret_access_key: ${{ secrets.TF_VAR_AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_aws_session_token:     ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: opentofu/setup-opentofu@v2.0.2
-  
       - name: Deploy
-        run: tofu apply
+        run: |
+          tofu init
+          tofu plan -out=tfplan
+          tofu apply -auto-approve tfplan
