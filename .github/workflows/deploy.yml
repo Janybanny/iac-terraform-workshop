@@ -13,7 +13,7 @@ jobs:
       TF_VAR_aws_session_token:     ${{ secrets.TF_VAR_AWS_SESSION_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: opentofu/setup-opentofu@v2.0.2
       - name: Deploy
         run: |
